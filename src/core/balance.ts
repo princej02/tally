@@ -1,0 +1,27 @@
+import type { Balance, Expense } from "./types";
+
+export function calculateBalances(expenses: Expense[]): Balance[] {
+  const balances = new Map<string, number>()
+
+  const add = (person: string, delta: number): void => {
+    balances.set(person, (balances.get(person) ?? 0) + delta)
+  }
+
+  for (const expense of expenses) {
+    const { amountPence, paidBy, splitBetween} = expense;
+    
+    const shareCount = splitBetween.length;
+    const base = Math.floor(amountPence / shareCount);
+    const remainder = amountPence - base * shareCount;
+
+    add(paidBy, amountPence);
+
+    splitBetween.forEach((person, i) => {
+      const share = base + (i < remainder ? 1 : 0);
+      add(person, -share)
+    })
+  }
+
+  return [...balances].map<Balance>(([person, netPence]) => ({ person, netPence }))
+}
+
