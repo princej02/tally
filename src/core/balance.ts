@@ -11,17 +11,23 @@ export function calculateBalances(expenses: Expense[]): Balance[] {
     const { amountPence, paidBy, splitBetween} = expense;
     
     const shareCount = splitBetween.length;
+    if (shareCount === 0) continue;
+
     const base = Math.floor(amountPence / shareCount);
     const remainder = amountPence - base * shareCount;
 
     add(paidBy, amountPence);
 
-    splitBetween.forEach((person, i) => {
+    const sortedSplit = [...splitBetween].sort((a, b) => a.localeCompare(b));
+
+    sortedSplit.forEach((person, i) => {
       const share = base + (i < remainder ? 1 : 0);
-      add(person, -share)
-    })
+      add(person, -share);
+    });
   }
 
-  return [...balances].map<Balance>(([person, netPence]) => ({ person, netPence }))
+  return [...balances]
+    .map<Balance>(([person, netPence]) => ({ person, netPence }))
+    .sort((a, b) => a.person.localeCompare(b.person));
 }
 
