@@ -9,5 +9,7 @@ export interface Expense {
   amountPence: number
   paidBy: string
   splitBetween: Array<string>
-  createdAt: Date
+  createdAt: string
 }
+
+export type CreateExpenseInput = Omit<Expense, "id" | "createdAt">;
