@@ -1,0 +1,85 @@
+@host = http://localhost:3000
+
+### health check
+GET {{host}}/health
+
+### unknown route -> 404 json
+GET {{host}}/nope
+
+### list expenses (empty at first)
+GET {{host}}/expenses
+
+### create an expense
+# @name createExpense
+POST {{host}}/expenses
+Content-Type: application/json
+
+{
+  "description": "lunch",
+  "amountPence": 1000,
+  "paidBy": "Alice",
+  "splitBetween": ["Alice", "Bob"]
+}
+
+### create another expense with an uneven split (exercises remainder distribution)
+POST {{host}}/expenses
+Content-Type: application/json
+
+{
+  "description": "taxi",
+  "amountPence": 1001,
+  "paidBy": "Bob",
+  "splitBetween": ["Alice", "Bob", "Carol"]
+}
+
+### list expenses again -> should include both above
+GET {{host}}/expenses
+
+### balances -> net position per person
+GET {{host}}/balances
+
+### validation error: empty body -> 400 with issues
+POST {{host}}/expenses
+Content-Type: application/json
+
+{}
+
+### validation error: duplicate person in splitBetween -> 400
+POST {{host}}/expenses
+Content-Type: application/json
+
+{
+  "description": "groceries",
+  "amountPence": 500,
+  "paidBy": "Alice",
+  "splitBetween": ["Alice", "Alice"]
+}
+
+### validation error: non-integer / non-positive amount -> 400
+POST {{host}}/expenses
+Content-Type: application/json
+
+{
+  "description": "bad amount",
+  "amountPence": -5,
+  "paidBy": "Alice",
+  "splitBetween": ["Alice"]
+}
+
+### validation error: unknown/extra field rejected (strictObject) -> 400
+POST {{host}}/expenses
+Content-Type: application/json
+
+{
+  "description": "extra field",
+  "amountPence": 100,
+  "paidBy": "Alice",
+  "splitBetween": ["Alice"],
+  "note": "not allowed"
+}
+
+### malformed json body -> 400, not a 500
+POST {{host}}/expenses
+Content-Type: application/json
+
+not json
