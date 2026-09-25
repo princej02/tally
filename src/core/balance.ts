@@ -18,7 +18,7 @@ export function calculateBalances(expenses: Expense[]): Balance[] {
 
     add(paidBy, amountPence);
 
-    const sortedSplit = [...splitBetween].sort((a, b) => a.localeCompare(b));
+    const sortedSplit = [...splitBetween].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
 
     sortedSplit.forEach((person, i) => {
       const share = base + (i < remainder ? 1 : 0);
@@ -28,6 +28,6 @@ export function calculateBalances(expenses: Expense[]): Balance[] {
 
   return [...balances]
     .map<Balance>(([person, netPence]) => ({ person, netPence }))
-    .sort((a, b) => a.person.localeCompare(b.person));
+    .sort((a, b) => (a.person < b.person ? -1 : a.person > b.person ? 1 : 0));
 }
 
