@@ -11,5 +11,3 @@ export interface Expense {
   splitBetween: Array<string>
   createdAt: string
 }
-
-export type CreateExpenseInput = Omit<Expense, "id" | "createdAt">;
