@@ -1,7 +1,7 @@
 import type { Database } from "bun:sqlite";
 import type { Expense } from "../core/types";
 
-export type CreateExpenseInput = Omit<Expense, "id" | "createdAt">;
+type CreateExpenseInput = Omit<Expense, "id" | "createdAt">;
 
 type RawExpenseRow = {
   id: number;
