@@ -23,6 +23,8 @@ function mapRowToExpense(row: RawExpenseRow): Expense {
   }
 }
 
+export type ExpenseStore = ReturnType<typeof createExpenseStore>;
+
 export function createExpenseStore(db: Database) {
   db.run(`
     CREATE TABLE IF NOT EXISTS expenses (
